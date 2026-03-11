@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SaaS Blueprint Tracker</title>
+<title>Embed SaaS Blueprint Tracker — Web Component for Any Website</title>
+<meta name="description" content="Embed the SaaS Blueprint Tracker in any website with two lines of code. Works in React, Vue, Angular, WordPress, Webflow. Zero dependencies.">
+<meta property="og:title" content="Embed SaaS Blueprint Tracker — Web Component for Any Website">
+<meta property="og:description" content="Drop the SaaS Blueprint Tracker into any website with two lines of code. React, Vue, Angular, plain HTML. Zero dependencies, dark & light theme.">
+<meta property="og:url" content="https://saas-blueprint-tracker.pages.dev/saas-blueprint-demo.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Embed SaaS Blueprint Tracker — Web Component for Any Website">
+<meta name="twitter:description" content="Drop the SaaS Blueprint Tracker into any website with two lines of code. React, Vue, Angular, plain HTML. Zero dependencies.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,700&family=Outfit:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -233,6 +241,13 @@ footer {
   font-size: 12px; color: var(--muted);
 }
 .footer-logo { font-family: var(--font-d); font-style: italic; font-size: 14px; color: var(--muted); }
+.footer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.footer-link {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s;
+}
+.footer-link:hover { color: var(--text); }
+.footer-note { font-family: var(--font-m); font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
 
 /* ── MOBILE ── */
 @media (max-width: 700px) {
@@ -476,7 +491,12 @@ tracker.addEventListener(<span class="str">'phase-complete'</span>, e =&gt; {
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">SaaS Blueprint</div>
-  <div>Progress persists in your browser · No data sent anywhere</div>
+  <div class="footer-links">
+    <a href="landing.html" class="footer-link">Home</a>
+    <a href="saas-blueprint-tracker.html" class="footer-link">Tracker</a>
+    <a href="https://github.com/fabian-emmanuel/saas-blueprint-tracker" class="footer-link" target="_blank">GitHub</a>
+  </div>
+  <div class="footer-note">Free & open source · No data collected · MIT License</div>
 </footer>
 
 <!-- Load the component -->
