@@ -1098,6 +1098,7 @@ function card(pid, item, idx) {
 
 function setPhase(id) {
   active = id;
+  history.replaceState(null, '', `#${id}`);
   renderMain();
   refreshSidebar();
   document.getElementById('main').scrollTop = 0;
@@ -1377,8 +1378,26 @@ function importProgress(input) {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+
+// Restore phase from URL hash on load
+const hashPhase = location.hash.slice(1);
+if (hashPhase && PHASES.find(p => p.id === hashPhase)) {
+  active = hashPhase;
+}
+
 renderAll();
 showOnboardingIfNeeded();
+
+// Handle browser back/forward navigation
+window.addEventListener('popstate', () => {
+  const id = location.hash.slice(1);
+  if (id && PHASES.find(p => p.id === id)) {
+    active = id;
+    renderMain();
+    refreshSidebar();
+    document.getElementById('main').scrollTop = 0;
+  }
+});
 </script>
 </body>
 </html>
