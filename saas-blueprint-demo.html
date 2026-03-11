@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS Blueprint Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,700&family=Outfit:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #06070C;
+  --surface: #0C0E16;
+  --surface-2: #10121C;
+  --surface-3: #181C2E;
+  --border: #181C2E;
+  --accent: #F0A500;
+  --green: #0DCF8B;
+  --text: #ECF0FC;
+  --muted: #4A5270;
+  --code-bg: #10121C;
+  --kw: #F0A500;
+  --at: #7EC8E3;
+  --str: #98C9A3;
+  --cm: #3A4060;
+  --code-base: #8892C0;
+  --feat-hover-border: #2A3050;
+  --copy-hover-border: #3A4060;
+  --font-d: 'Fraunces', Georgia, serif;
+  --font-ui: 'Outfit', system-ui, sans-serif;
+  --font-m: 'DM Mono', monospace;
+}
+
+html { height: 100%; }
+body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 58px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; background: rgba(6,7,12,0.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--font-d); font-style: italic; font-weight: 700;
+  font-size: 18px; color: var(--text); letter-spacing: -0.02em;
+}
+.nav-logo span { color: var(--accent); font-style: normal; }
+
+.nav-links { display: flex; align-items: center; gap: 8px; }
+.btn-page-theme {
+  width: 32px; height: 32px; border-radius: 6px;
+  border: 1px solid var(--border); background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: all 0.2s; flex-shrink: 0;
+}
+.btn-page-theme:hover { color: var(--text); border-color: #2A3050; background: rgba(255,255,255,0.04); }
+.btn-page-theme svg { transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.btn-page-theme:hover svg { transform: rotate(20deg); }
+.nav-link {
+  font-size: 12.5px; font-weight: 500; color: var(--muted);
+  text-decoration: none; padding: 6px 12px; border-radius: 6px;
+  transition: all 0.2s; border: 1px solid transparent;
+}
+.nav-link:hover { color: var(--text); border-color: var(--border); }
+.nav-link.primary {
+  background: var(--accent); color: #0C0E16; font-weight: 600; border-color: var(--accent);
+}
+.nav-link.primary:hover { opacity: 0.9; color: #0C0E16; }
+
+/* ── HERO ── */
+.hero {
+  padding: 120px 32px 64px;
+  max-width: 720px; margin: 0 auto; text-align: center;
+}
+.hero-eyebrow {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 18px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; width: 24px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+.hero-h1 {
+  font-family: var(--font-d); font-style: italic; font-weight: 700;
+  font-size: clamp(38px, 6vw, 64px); line-height: 1.05; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 20px;
+}
+.hero-h1 em { font-style: normal; color: var(--accent); }
+.hero-sub {
+  font-size: 16px; font-weight: 300; color: var(--muted); line-height: 1.6;
+  max-width: 480px; margin: 0 auto 36px;
+}
+.hero-pills { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.pill {
+  font-family: var(--font-m); font-size: 10.5px; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px;
+  letter-spacing: 0.04em;
+}
+
+/* ── TRACKER SECTION ── */
+.tracker-section {
+  padding: 0 24px 24px;
+  max-width: 1280px; margin: 0 auto;
+}
+.tracker-wrap {
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  height: 640px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 40px 80px rgba(0,0,0,0.5);
+}
+
+/* ── THEME TOGGLE ── */
+.controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; padding: 0 0 20px;
+}
+.ctrl-label {
+  font-family: var(--font-m); font-size: 10px; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.theme-switcher {
+  display: flex; align-items: center;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 3px; gap: 2px;
+}
+.toggle-btn {
+  font-family: var(--font-m); font-size: 11px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--muted); background: none;
+  border: none; border-radius: 5px; padding: 7px 18px;
+  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+}
+.toggle-btn:hover { color: var(--text); }
+.toggle-btn.active {
+  background: var(--surface-3); color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Page light mode */
+body.light {
+  --bg: #F0F2F8;
+  --surface: #FFFFFF;
+  --surface-2: #E8ECF4;
+  --surface-3: #DDE2EF;
+  --border: #D0D6E8;
+  --text: #0C1020;
+  --muted: #5A6285;
+  --code-bg: #F4F6FB;
+  --kw: #B06000;
+  --at: #0070A8;
+  --str: #287A3C;
+  --cm: #9AA0BC;
+  --code-base: #4A5280;
+  --feat-hover-border: #B0BADC;
+  --copy-hover-border: #A0AACC;
+  background: var(--bg); color: var(--text);
+}
+body.light nav { background: rgba(240,242,248,0.9); border-color: var(--border); }
+body.light .tracker-wrap { border-color: var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.12); }
+body.light .theme-switcher { background: var(--surface); border-color: var(--border); }
+body.light .toggle-btn.active { background: var(--surface-3); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+body.light footer { border-color: var(--border); }
+
+/* ── EMBED SECTION ── */
+.section {
+  max-width: 860px; margin: 0 auto; padding: 72px 32px;
+}
+.section-label {
+  font-family: var(--font-m); font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+}
+.section-h2 {
+  font-family: var(--font-d); font-style: italic; font-weight: 700;
+  font-size: 36px; letter-spacing: -0.03em; color: var(--text); margin-bottom: 10px;
+}
+.section-p { font-size: 14px; color: var(--muted); line-height: 1.65; max-width: 520px; margin-bottom: 36px; }
+
+.embed-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; margin-bottom: 16px;
+}
+.embed-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+}
+.embed-title { font-family: var(--font-m); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.copy-btn {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); background: none;
+  border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px;
+  cursor: pointer; transition: all 0.2s;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--copy-hover-border); }
+.copy-btn.copied { color: var(--green); border-color: rgba(13,207,139,0.4); }
+
+pre {
+  padding: 18px 18px; overflow-x: auto; font-family: var(--font-m);
+  font-size: 12.5px; line-height: 1.7; color: var(--code-base);
+  background: var(--code-bg);
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+pre::-webkit-scrollbar { height: 4px; }
+pre::-webkit-scrollbar-thumb { background: var(--border); }
+
+.kw  { color: var(--kw); }
+.at  { color: var(--at); }
+.str { color: var(--str); }
+.cm  { color: var(--cm); font-style: italic; }
+
+/* ── FEATURES ── */
+.features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-bottom: 48px;
+}
+.feat {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px; transition: border-color 0.2s;
+}
+.feat:hover { border-color: var(--feat-hover-border); }
+.feat-icon { font-size: 20px; margin-bottom: 10px; }
+.feat-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.feat-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.feat-desc code { font-family: var(--font-m); font-size: 11px; color: var(--at); }
+
+/* ── EVENT EXAMPLE ── */
+.event-example { margin-top: 16px; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border); padding: 28px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--muted);
+}
+.footer-logo { font-family: var(--font-d); font-style: italic; font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SaaS <span>Blueprint</span></div>
+  <div class="nav-links">
+    <a href="#embed" class="nav-link">Embed</a>
+    <a href="#features" class="nav-link">Features</a>
+    <button class="btn-page-theme" id="btnPageTheme" onclick="togglePageTheme()" title="Toggle page theme">
+      <svg id="pageThemeIcon" width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <path d="M7.5 1v1M7.5 13v1M1 7.5H2M13 7.5h1M3.1 3.1l.7.7M11.2 11.2l.7.7M11.2 3.1l-.7.7M3.8 11.2l-.7.7M10.5 7.5a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <a href="#embed" class="nav-link primary">Get Embed Code</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">18 phases · 109 milestones</div>
+  <h1 class="hero-h1">Track your SaaS journey,<br><em>every step of the way.</em></h1>
+  <p class="hero-sub">From first idea to exit strategy — a structured tracker you can embed on any website in two lines of code.</p>
+  <div class="hero-pills">
+    <span class="pill">Web Component</span>
+    <span class="pill">Shadow DOM</span>
+    <span class="pill">Zero dependencies</span>
+    <span class="pill">LocalStorage</span>
+    <span class="pill">Dark + Light theme</span>
+    <span class="pill">Multi-project</span>
+  </div>
+</div>
+
+<!-- TRACKER -->
+<div class="tracker-section">
+  <div class="controls">
+    <span class="ctrl-label">Preview theme</span>
+    <div class="theme-switcher">
+      <button class="toggle-btn active" onclick="setTheme('dark')">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v1M6 10v1M1 6H2M10 6h1M2.5 2.5l.7.7M8.8 8.8l.7.7M9.5 2.5l-.7.7M3.2 8.8l-.7.7M8.5 6a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Dark
+      </button>
+      <button class="toggle-btn" onclick="setTheme('light')">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10.5 6.5A4.5 4.5 0 016 11a4.5 4.5 0 010-9c.28 0 .55.03.81.07A3.5 3.5 0 0010.93 5.7c.36-.37.57-.41.57-.41a4.47 4.47 0 010 1.21z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Light
+      </button>
+    </div>
+  </div>
+  <div class="tracker-wrap">
+    <saas-blueprint-tracker id="tracker" theme="dark" project="demo"></saas-blueprint-tracker>
+  </div>
+</div>
+
+<!-- EMBED SECTION -->
+<div class="section" id="embed">
+  <div class="section-label">Embed it</div>
+  <h2 class="section-h2">Two lines. Any website.</h2>
+  <p class="section-p">Drop the script tag once — then place the component anywhere. Works in plain HTML, React, Vue, Webflow, WordPress, or any framework.</p>
+
+  <!-- Basic embed -->
+  <div class="embed-card">
+    <div class="embed-header">
+      <span class="embed-title">Basic embed</span>
+      <button class="copy-btn" onclick="copyCode(this, 'basic')">Copy</button>
+    </div>
+    <pre id="basic"><span class="cm">&lt;!-- 1. Load the component (once, in &lt;head&gt; or before &lt;/body&gt;) --&gt;</span>
+<span class="kw">&lt;script</span> <span class="at">src</span>=<span class="str">"https://your-cdn.com/saas-blueprint-tracker.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- 2. Use it anywhere --&gt;</span>
+<span class="kw">&lt;saas-blueprint-tracker</span> <span class="at">style</span>=<span class="str">"height: 700px"</span><span class="kw">&gt;&lt;/saas-blueprint-tracker&gt;</span></pre>
+  </div>
+
+  <!-- With options -->
+  <div class="embed-card">
+    <div class="embed-header">
+      <span class="embed-title">With options</span>
+      <button class="copy-btn" onclick="copyCode(this, 'options')">Copy</button>
+    </div>
+    <pre id="options"><span class="kw">&lt;saas-blueprint-tracker</span>
+  <span class="at">theme</span>=<span class="str">"light"</span>            <span class="cm">&lt;!-- "dark" (default) | "light" --&gt;</span>
+  <span class="at">project</span>=<span class="str">"my-startup"</span>    <span class="cm">&lt;!-- namespaces localStorage (run multiple trackers) --&gt;</span>
+  <span class="at">style</span>=<span class="str">"height: 700px"</span>   <span class="cm">&lt;!-- control the height --&gt;</span>
+<span class="kw">&gt;&lt;/saas-blueprint-tracker&gt;</span></pre>
+  </div>
+
+  <!-- React -->
+  <div class="embed-card">
+    <div class="embed-header">
+      <span class="embed-title">React / Next.js</span>
+      <button class="copy-btn" onclick="copyCode(this, 'react')">Copy</button>
+    </div>
+    <pre id="react"><span class="cm">// In your component or _app.tsx</span>
+<span class="kw">import</span> <span class="str">'saas-blueprint-tracker'</span>  <span class="cm">// after npm install</span>
+
+<span class="kw">export default function</span> Page() {
+  <span class="kw">return</span> (
+    <span class="kw">&lt;saas-blueprint-tracker</span>
+      <span class="at">theme</span>=<span class="str">"dark"</span>
+      <span class="at">project</span>=<span class="str">"acme-saas"</span>
+      <span class="at">style</span>=<span class="str">{{ height: '700px' }}</span>
+    <span class="kw">/&gt;</span>
+  )
+}</pre>
+  </div>
+
+  <!-- Angular -->
+  <div class="embed-card">
+    <div class="embed-header">
+      <span class="embed-title">Angular</span>
+      <button class="copy-btn" onclick="copyCode(this, 'angular')">Copy</button>
+    </div>
+    <pre id="angular"><span class="cm">// 1. app.module.ts — add CUSTOM_ELEMENTS_SCHEMA</span>
+<span class="kw">import</span> { NgModule, CUSTOM_ELEMENTS_SCHEMA } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> <span class="str">'saas-blueprint-tracker'</span>;
+
+<span class="at">@NgModule</span>({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  <span class="cm">// ... rest of module</span>
+})
+<span class="kw">export class</span> AppModule {}
+
+<span class="cm">// 2. your.component.html</span>
+<span class="kw">&lt;saas-blueprint-tracker</span>
+  <span class="at">theme</span>=<span class="str">"dark"</span>
+  <span class="at">project</span>=<span class="str">"my-saas"</span>
+  <span class="at">style</span>=<span class="str">"height: 700px"</span>
+<span class="kw">&gt;&lt;/saas-blueprint-tracker&gt;</span>
+
+<span class="cm">// 3. Listening to events — your.component.ts</span>
+<span class="kw">import</span> { Component, AfterViewInit, ViewChild, ElementRef } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+<span class="at">@Component</span>({ ... })
+<span class="kw">export class</span> YourComponent <span class="kw">implements</span> AfterViewInit {
+  <span class="at">@ViewChild</span>(<span class="str">'tracker'</span>) trackerRef!: ElementRef;
+
+  ngAfterViewInit() {
+    <span class="kw">this</span>.trackerRef.nativeElement.addEventListener(<span class="str">'phase-complete'</span>, (e: CustomEvent) =&gt; {
+      console.log(<span class="str">'Phase complete:'</span>, e.detail); <span class="cm">// { id, name, project }</span>
+    });
+  }
+}</pre>
+  </div>
+
+  <!-- Events -->
+  <div class="embed-card event-example">
+    <div class="embed-header">
+      <span class="embed-title">Listening to events</span>
+      <button class="copy-btn" onclick="copyCode(this, 'events')">Copy</button>
+    </div>
+    <pre id="events"><span class="kw">const</span> tracker = document.querySelector(<span class="str">'saas-blueprint-tracker'</span>)
+
+<span class="cm">// Fires whenever an item is checked or unchecked</span>
+tracker.addEventListener(<span class="str">'item-toggle'</span>, e =&gt; {
+  console.log(e.detail)  <span class="cm">// { key, checked, project }</span>
+})
+
+<span class="cm">// Fires when all items in a phase are complete</span>
+tracker.addEventListener(<span class="str">'phase-complete'</span>, e =&gt; {
+  console.log(e.detail)  <span class="cm">// { id, name, project }</span>
+  <span class="cm">// e.g. send to your analytics, unlock next feature, etc.</span>
+})</pre>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section" id="features" style="padding-top: 0;">
+  <div class="section-label">What's included</div>
+  <h2 class="section-h2">Everything built in.</h2>
+  <p class="section-p" style="margin-bottom: 28px;">No backend, no accounts, no config files. Just drop it in.</p>
+
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">💾</div>
+      <div class="feat-name">Auto-saved</div>
+      <div class="feat-desc">Progress persists in localStorage. Survives refreshes, browser restarts, and page navigation.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🗂️</div>
+      <div class="feat-name">Multi-project</div>
+      <div class="feat-desc">Use the <code >project</code> attr to run separate trackers for different SaaS ideas on the same page.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🎨</div>
+      <div class="feat-name">Dark &amp; Light</div>
+      <div class="feat-desc">Switch with <code >theme="light"</code>. Shadow DOM keeps it isolated from your site's styles.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📡</div>
+      <div class="feat-name">Custom events</div>
+      <div class="feat-desc">Hook into <code >item-toggle</code> and <code >phase-complete</code> to connect to your analytics or backend.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📱</div>
+      <div class="feat-name">Responsive</div>
+      <div class="feat-desc">Sidebar collapses on small screens. Works on mobile, tablet, and desktop.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-name">Zero deps</div>
+      <div class="feat-desc">Pure Web Component. No React, no Vue, no build step required. One script tag.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SaaS Blueprint</div>
+  <div>Progress persists in your browser · No data sent anywhere</div>
+</footer>
+
+<!-- Load the component -->
+<script src="saas-blueprint-tracker.js"></script>
+
+<script>
+// Preview theme — only affects the tracker component
+function setTheme(t) {
+  document.getElementById('tracker').setAttribute('theme', t);
+  document.querySelectorAll('.toggle-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().toLowerCase() === t);
+  });
+}
+
+// Page theme — only affects the page itself
+const PAGE_THEME_KEY = 'saas-demo-page-theme';
+const PAGE_MOON = `<path d="M12 3a7 7 0 01-7 9.95A6.5 6.5 0 1012 3z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>`;
+const PAGE_SUN  = `<path d="M7.5 1v1M7.5 13v1M1 7.5H2M13 7.5h1M3.1 3.1l.7.7M11.2 11.2l.7.7M11.2 3.1l-.7.7M3.8 11.2l-.7.7M10.5 7.5a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>`;
+
+function applyPageTheme(t) {
+  document.body.classList.toggle('light', t === 'light');
+  document.getElementById('pageThemeIcon').innerHTML = t === 'light' ? PAGE_MOON : PAGE_SUN;
+}
+function togglePageTheme() {
+  const next = document.body.classList.contains('light') ? 'dark' : 'light';
+  localStorage.setItem(PAGE_THEME_KEY, next);
+  applyPageTheme(next);
+}
+applyPageTheme(localStorage.getItem(PAGE_THEME_KEY) || 'dark');
+
+// Copy code buttons
+const rawCode = {
+  basic: `<!-- 1. Load the component (once, in <head> or before </body>) -->
+<script src="https://your-cdn.com/saas-blueprint-tracker.js"><\/script>
+
+<!-- 2. Use it anywhere -->
+<saas-blueprint-tracker style="height: 700px"></saas-blueprint-tracker>`,
+
+  options: `<saas-blueprint-tracker
+  theme="light"
+  project="my-startup"
+  style="height: 700px"
+></saas-blueprint-tracker>`,
+
+  react: `import 'saas-blueprint-tracker'
+
+export default function Page() {
+  return (
+    <saas-blueprint-tracker
+      theme="dark"
+      project="acme-saas"
+      style={{ height: '700px' }}
+    />
+  )
+}`,
+
+  angular: `// 1. app.module.ts — add CUSTOM_ELEMENTS_SCHEMA
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import 'saas-blueprint-tracker';
+
+@NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  // ... rest of module
+})
+export class AppModule {}
+
+// 2. your.component.html
+<saas-blueprint-tracker
+  theme="dark"
+  project="my-saas"
+  style="height: 700px"
+></saas-blueprint-tracker>
+
+// 3. Listening to events — your.component.ts
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+
+@Component({ ... })
+export class YourComponent implements AfterViewInit {
+  @ViewChild('tracker') trackerRef!: ElementRef;
+
+  ngAfterViewInit() {
+    this.trackerRef.nativeElement.addEventListener('phase-complete', (e: CustomEvent) => {
+      console.log('Phase complete:', e.detail); // { id, name, project }
+    });
+  }
+}`,
+
+  events: `const tracker = document.querySelector('saas-blueprint-tracker')
+
+tracker.addEventListener('item-toggle', e => {
+  console.log(e.detail) // { key, checked, project }
+})
+
+tracker.addEventListener('phase-complete', e => {
+  console.log(e.detail) // { id, name, project }
+})`,
+};
+
+function copyCode(btn, id) {
+  navigator.clipboard.writeText(rawCode[id]).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Listen to tracker events (demo)
+document.getElementById('tracker').addEventListener('phase-complete', e => {
+  console.log('Phase complete:', e.detail);
+});
+</script>
+</body>
+</html>

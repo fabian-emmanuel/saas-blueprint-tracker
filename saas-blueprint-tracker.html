@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,700&family=Outfit:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #08090E;
+  --surface:     #0F1118;
+  --surface-2:   #161A24;
+  --surface-3:   #1C2030;
+  --border:      #20263A;
+  --border-2:    #2C3450;
+  --accent:      #F0A500;
+  --accent-glow: rgba(240,165,0,0.12);
+  --green:       #0DCF8B;
+  --green-glow:  rgba(13,207,139,0.1);
+  --text:        #ECF0FC;
+  --muted:       #4E5570;
+  --dim:         #2E3450;
+  --font-d:      'Fraunces', serif;
+  --font-ui:     'Outfit', sans-serif;
+  --font-m:      'DM Mono', monospace;
+}
+
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); overflow: hidden; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 54px;
+  background: rgba(15,17,24,0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 20px; padding: 0 20px;
+  z-index: 100;
+}
+
+.logo {
+  font-family: var(--font-d); font-style: italic; font-size: 18px; font-weight: 700;
+  letter-spacing: -0.02em; white-space: nowrap; color: var(--text);
+}
+.logo em { font-style: normal; color: var(--accent); }
+
+.global-bar { flex: 1; height: 3px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.global-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--green) 100%);
+  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  width: 0%;
+}
+
+.global-stats {
+  font-family: var(--font-m); font-size: 11px; color: var(--muted);
+  white-space: nowrap; display: flex; align-items: center; gap: 6px;
+}
+.global-stats strong { color: var(--text); font-weight: 500; }
+.global-pct { color: var(--accent); font-weight: 500; }
+
+.btn-reset {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); background: none;
+  border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-reset:hover { color: var(--text); border-color: var(--border-2); }
+
+.btn-theme {
+  width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+  background: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: all 0.2s; flex-shrink: 0;
+}
+.btn-theme:hover { color: var(--text); border-color: var(--border-2); background: var(--surface-2); }
+.btn-theme svg { transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.btn-theme:hover svg { transform: rotate(20deg); }
+
+/* ── LIGHT THEME ── */
+body.light {
+  --bg:          #F0F2F8;
+  --surface:     #FFFFFF;
+  --surface-2:   #E8ECF5;
+  --surface-3:   #DDE2EF;
+  --border:      #D0D6E8;
+  --border-2:    #BCC4DC;
+  --accent:      #C97D00;
+  --accent-glow: rgba(201,125,0,0.1);
+  --green:       #0AA870;
+  --green-glow:  rgba(10,168,112,0.1);
+  --text:        #0C1020;
+  --muted:       #5A6285;
+  --dim:         #A8B2CC;
+}
+body.light { background: var(--bg); color: var(--text); }
+body.light .topbar { background: rgba(240,242,248,0.92); }
+body.light .btn-theme:hover { background: var(--surface-2); }
+
+/* ── LAYOUT ── */
+.layout { display: flex; height: 100vh; padding-top: 54px; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 248px; min-width: 248px; background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto; overflow-x: hidden; padding: 12px 0 24px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.stage-label {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--dim); padding: 16px 16px 6px;
+}
+.stage-label:first-child { padding-top: 8px; }
+
+.phase-btn {
+  width: 100%; background: none; border: none; cursor: pointer; text-align: left;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px; transition: background 0.15s; position: relative;
+}
+.phase-btn:hover { background: var(--surface-2); }
+.phase-btn.active { background: var(--surface-2); }
+.phase-btn.active::after {
+  content: ''; position: absolute; left: 0; top: 4px; bottom: 4px;
+  width: 2px; background: var(--accent); border-radius: 0 2px 2px 0;
+}
+.phase-btn.done.active::after { background: var(--green); }
+
+.phase-num {
+  font-family: var(--font-m); font-size: 9px; color: var(--dim);
+  min-width: 18px; letter-spacing: 0.05em;
+}
+.phase-btn.active .phase-num, .phase-btn:hover .phase-num { color: var(--muted); }
+
+.phase-info { flex: 1; min-width: 0; }
+.phase-lbl {
+  font-size: 12.5px; font-weight: 500; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+.phase-btn.active .phase-lbl, .phase-btn:hover .phase-lbl { color: var(--text); }
+.phase-btn.done .phase-lbl { color: var(--green); }
+
+.phase-track { height: 2px; background: var(--surface-3); border-radius: 1px; margin-top: 4px; overflow: hidden; }
+.phase-fill { height: 100%; border-radius: 1px; background: var(--accent); transition: width 0.4s ease; }
+.phase-btn.done .phase-fill { background: var(--green); }
+
+.phase-ct { font-family: var(--font-m); font-size: 9px; color: var(--dim); white-space: nowrap; }
+.phase-btn.done .phase-ct { color: rgba(13,207,139,0.5); }
+.phase-btn.active .phase-ct { color: var(--muted); }
+
+/* ── MAIN ── */
+.main {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 36px 44px 60px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.main::-webkit-scrollbar { width: 5px; }
+.main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── PHASE HEADER ── */
+.ph { margin-bottom: 28px; animation: fadeUp 0.3s ease both; }
+
+.ph-top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 10px; }
+
+.ph-title {
+  font-family: var(--font-d); font-style: italic; font-weight: 700;
+  font-size: 38px; letter-spacing: -0.03em; line-height: 1; color: var(--text);
+}
+
+.ph-right { text-align: right; }
+.ph-pct {
+  font-family: var(--font-m); font-size: 30px; font-weight: 500;
+  color: var(--accent); line-height: 1;
+  transition: color 0.3s;
+}
+.ph-pct.done { color: var(--green); }
+.ph-sub { font-family: var(--font-m); font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.ph-bar { height: 2px; background: var(--surface-3); border-radius: 1px; overflow: hidden; }
+.ph-bar-fill {
+  height: 100%; border-radius: 1px;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ── COMPLETE BANNER ── */
+.done-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--green-glow); border: 1px solid rgba(13,207,139,0.2);
+  border-radius: 8px; padding: 11px 15px; margin-bottom: 22px;
+  font-size: 13px; color: var(--green); font-weight: 500;
+  animation: fadeUp 0.3s ease;
+}
+
+/* ── GROUPS ── */
+.group-block { margin-bottom: 28px; }
+.group-hd {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+}
+.group-hd::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── GRID ── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(172px, 1fr)); gap: 8px; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 13px 14px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  position: relative; overflow: hidden; user-select: none;
+  animation: fadeUp 0.25s ease both;
+}
+.card::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--green-glow); opacity: 0; transition: opacity 0.25s; pointer-events: none;
+}
+.card:hover { border-color: var(--border-2); background: var(--surface-2); transform: translateY(-1px); }
+.card:active { transform: translateY(0); }
+.card.checked { border-color: rgba(13,207,139,0.2); }
+.card.checked::before { opacity: 1; }
+.card.checked:hover { border-color: rgba(13,207,139,0.35); }
+
+.cb {
+  width: 17px; height: 17px; min-width: 17px; border: 1.5px solid var(--border-2);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; margin-top: 1px; position: relative; z-index: 1;
+}
+.card:hover .cb { border-color: var(--muted); }
+.card.checked .cb { background: var(--green); border-color: var(--green); }
+
+.ck {
+  opacity: 0; transform: scale(0.4) rotate(-10deg);
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.card.checked .ck { opacity: 1; transform: scale(1) rotate(0deg); }
+
+.card-name {
+  font-size: 12.5px; font-weight: 500; color: var(--muted);
+  line-height: 1.35; transition: color 0.2s; position: relative; z-index: 1;
+}
+.card:hover .card-name { color: var(--text); }
+.card.checked .card-name {
+  color: rgba(13,207,139,0.7);
+  text-decoration: line-through;
+  text-decoration-color: rgba(13,207,139,0.3);
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--surface-2); border: 1px solid rgba(13,207,139,0.35);
+  border-radius: 8px; padding: 11px 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500; color: var(--green);
+  transform: translateY(64px) scale(0.97); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0) scale(1); opacity: 1; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .sidebar { width: 52px; min-width: 52px; }
+  .phase-info, .phase-ct { display: none; }
+  .phase-num { min-width: auto; }
+  .main { padding: 20px 16px 40px; }
+  .ph-title { font-size: 26px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">SaaS <em>Blueprint</em></div>
+  <div class="global-bar"><div class="global-fill" id="gFill"></div></div>
+  <div class="global-stats">
+    <strong id="gDone">0</strong>&thinsp;/&thinsp;<span id="gTotal">0</span>
+    &nbsp;·&nbsp;<span class="global-pct" id="gPct">0%</span>
+  </div>
+  <button class="btn-theme" id="btnTheme" onclick="toggleTheme()" title="Toggle theme">
+    <svg id="themeIcon" width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M7.5 1v1M7.5 13v1M1 7.5H2M13 7.5h1M3.1 3.1l.7.7M11.2 11.2l.7.7M11.2 3.1l-.7.7M3.8 11.2l-.7.7M10.5 7.5a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <button class="btn-reset" onclick="resetAll()">Reset</button>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="toast" id="toast">
+  <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+    <path d="M1.5 5L4.5 8L11.5 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const STAGES = [
+  { label: 'Discover', ids: ['idea','validation','planning','legal'] },
+  { label: 'Build',    ids: ['design','development','testing'] },
+  { label: 'Ship',     ids: ['launch'] },
+  { label: 'Grow',     ids: ['acquisition','conversion','revenue','finance','analytics','feedback','retention','customer-success'] },
+  { label: 'Scale',    ids: ['growth','scaling'] },
+];
+
+const PHASES = [
+  { id:'idea',             name:'Idea',                  items:['Problem Discovery','Market Research','Niche Selection','Competitor Analysis','Opportunity Mapping'] },
+  { id:'validation',       name:'Validation',            items:['Customer Interviews','Landing Page Test','Waitlist','Pre Sales','Demand Testing'] },
+  { id:'planning',         name:'Planning',              items:['Product Roadmap','Feature Prioritization','MVP Scope','Tech Stack','Development Plan','Pricing Strategy'] },
+  { id:'legal',            name:'Legal & Compliance',    items:['Business Entity','Terms of Service','Privacy Policy','GDPR & CCPA','SOC2 & Certifications','Billing Compliance'] },
+  { id:'design',           name:'Design',                items:['Wireframes','UI Design','UX Flows','Prototype','Design System'] },
+  { id:'development',      name:'Development',           groups:[
+    { name:'Core',           items:['Frontend','Backend','APIs','Database','Authentication','Integrations'] },
+    { name:'Infrastructure', items:['Cloud Hosting','DevOps','CI/CD','Monitoring','Security','Incident Response'] },
+    { name:'Documentation',  items:['Engineering Docs','API Docs','Runbooks','User Docs'] }
+  ]},
+  { id:'testing',          name:'Testing',               items:['Unit Testing','Integration Testing','Bug Fixing','Performance Testing','Beta Testing'] },
+  { id:'launch',           name:'Launch',                items:['Landing Page','Product Hunt','Beta Users','Early Adopters','Public Release','Changelog & Release Notes'] },
+  { id:'acquisition',      name:'Acquisition',           items:['SEO Wins','Content Marketing','Social Media','Cold Email','Influencer Outreach','Affiliate Marketing','Directories & SaaS Marketplaces','Communities','Partnerships'] },
+  { id:'conversion',       name:'Conversion',            items:['Sales Funnel','Free Trial','Freemium Model','Pricing Page','Checkout Optimization'] },
+  { id:'revenue',          name:'Revenue',               items:['Subscriptions','Upsells','Add-ons','Annual Plans','Enterprise Deals'] },
+  { id:'finance',          name:'Finance',               items:['Runway & Burn Rate','MRR & ARR Tracking','Payment Infrastructure','Tax & Accounting','Fundraising'] },
+  { id:'analytics',        name:'Analytics',             items:['User Tracking','Funnel Analysis','Cohort Analysis','KPI Dashboard','A/B Testing'] },
+  { id:'feedback',         name:'Feedback & Iteration',  items:['User Interviews','Feature Requests','Bug Reports','Public Roadmap','Release Loop'] },
+  { id:'retention',        name:'Retention',             items:['User Onboarding','Email Automation','Feature Adoption','Churn Reduction','Win-back Campaigns'] },
+  { id:'customer-success', name:'Customer Success',      items:['Onboarding Support','Health Scoring','QBRs & Check-ins','Help Desk & Ticketing','Customer Support'] },
+  { id:'growth',           name:'Growth',                items:['Referral Programs','Community Building','Product Led Growth','Viral Loops','Expansion Strategy'] },
+  { id:'scaling',          name:'Scaling',               items:['Automation','Hiring','Systems & Processes','Localization & i18n','Global Expansion','Exit Strategy'] },
+];
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+
+const slug  = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+const ikey  = (pid, item) => `${pid}::${slug(item)}`;
+const pitems = p => p.groups ? p.groups.flatMap(g => g.items) : p.items;
+const total  = () => PHASES.reduce((s,p) => s + pitems(p).length, 0);
+const pDone  = p  => pitems(p).filter(i => done.has(ikey(p.id,i))).length;
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+const KEY = 'saas-bp-v1';
+let done   = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+let active = PHASES[0].id;
+let toastT;
+
+const save = () => localStorage.setItem(KEY, JSON.stringify([...done]));
+
+function toggle(key) {
+  const was = done.has(key);
+  was ? done.delete(key) : done.add(key);
+  save();
+
+  // Update just the card (no full re-render = no animation jank)
+  const card = document.querySelector(`[data-key="${key}"]`);
+  if (card) card.classList.toggle('checked', !was);
+
+  // Update header stats + progress + global bar
+  refreshPhaseHeader();
+  refreshSidebar();
+  refreshTopBar();
+
+  // Phase complete toast
+  if (!was) {
+    const pid   = key.split('::')[0];
+    const phase = PHASES.find(p => p.id === pid);
+    if (phase) {
+      const d = pDone(phase), t = pitems(phase).length;
+      if (d === t) {
+        // Show banner
+        const b = document.getElementById('done-banner');
+        if (b) { b.style.display = 'flex'; }
+        toast(`${phase.name} complete!`);
+      }
+    }
+  }
+}
+
+function resetAll() {
+  if (!confirm('Reset all progress?')) return;
+  done.clear(); save(); renderAll();
+}
+
+const THEME_KEY = 'saas-bp-theme';
+const MOON_SVG = `<path d="M12 3a7 7 0 01-7 9.95A6.5 6.5 0 1012 3z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>`;
+const SUN_SVG  = `<path d="M7.5 1v1M7.5 13v1M1 7.5H2M13 7.5h1M3.1 3.1l.7.7M11.2 11.2l.7.7M11.2 3.1l-.7.7M3.8 11.2l-.7.7M10.5 7.5a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>`;
+
+function applyTheme(t) {
+  document.body.classList.toggle('light', t === 'light');
+  document.getElementById('themeIcon').innerHTML = t === 'light' ? MOON_SVG : SUN_SVG;
+}
+function toggleTheme() {
+  const next = document.body.classList.contains('light') ? 'dark' : 'light';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+
+function toast(msg) {
+  const el  = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+
+function renderAll() {
+  renderSidebar();
+  renderMain();
+  refreshTopBar();
+}
+
+function renderSidebar() {
+  const sb = document.getElementById('sidebar');
+  const phaseMap = Object.fromEntries(PHASES.map((p,i) => [p.id, i+1]));
+  sb.innerHTML = STAGES.map(stage => `
+    <div class="stage-label">${stage.label}</div>
+    ${stage.ids.map(id => {
+      const p   = PHASES.find(x => x.id === id);
+      const d   = pDone(p), t = pitems(p).length;
+      const pct = t ? (d/t)*100 : 0;
+      const num = phaseMap[id];
+      const isDone = d === t;
+      const isAct  = id === active;
+      return `
+        <button class="phase-btn ${isAct?'active':''} ${isDone?'done':''}" onclick="setPhase('${id}')">
+          <span class="phase-num">${String(num).padStart(2,'0')}</span>
+          <span class="phase-info">
+            <div class="phase-lbl">${p.name}</div>
+            <div class="phase-track"><div class="phase-fill" style="width:${pct}%"></div></div>
+          </span>
+          <span class="phase-ct">${d}/${t}</span>
+        </button>`;
+    }).join('')}
+  `).join('');
+}
+
+function refreshSidebar() {
+  // Lightweight update: just update classes + bar widths
+  document.querySelectorAll('.phase-btn').forEach(btn => {
+    // extract id from onclick
+    const match = btn.getAttribute('onclick').match(/'([^']+)'/);
+    if (!match) return;
+    const id  = match[1];
+    const p   = PHASES.find(x => x.id === id);
+    if (!p) return;
+    const d   = pDone(p), t = pitems(p).length;
+    const pct = t ? (d/t)*100 : 0;
+    btn.classList.toggle('done', d === t);
+    btn.classList.toggle('active', id === active);
+    const fill = btn.querySelector('.phase-fill');
+    const ct   = btn.querySelector('.phase-ct');
+    if (fill) fill.style.width = pct + '%';
+    if (ct)   ct.textContent = `${d}/${t}`;
+  });
+}
+
+function refreshTopBar() {
+  const T  = total();
+  const D  = done.size;
+  const pct = T ? Math.round((D/T)*100) : 0;
+  document.getElementById('gFill').style.width  = pct + '%';
+  document.getElementById('gDone').textContent  = D;
+  document.getElementById('gTotal').textContent = T;
+  document.getElementById('gPct').textContent   = pct + '%';
+}
+
+function renderMain() {
+  const phase = PHASES.find(p => p.id === active);
+  if (!phase) return;
+
+  const items  = pitems(phase);
+  const d      = items.filter(i => done.has(ikey(phase.id, i))).length;
+  const t      = items.length;
+  const pct    = t ? Math.round((d/t)*100) : 0;
+  const isDone = d === t;
+
+  let body = '';
+  if (phase.groups) {
+    let offset = 0;
+    body = phase.groups.map(g => {
+      const cards = g.items.map((item, idx) => card(phase.id, item, offset + idx)).join('');
+      offset += g.items.length;
+      return `<div class="group-block">
+        <div class="group-hd">${g.name}</div>
+        <div class="grid">${cards}</div>
+      </div>`;
+    }).join('');
+  } else {
+    const cards = phase.items.map((item, idx) => card(phase.id, item, idx)).join('');
+    body = `<div class="grid">${cards}</div>`;
+  }
+
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div class="ph-top">
+        <div class="ph-title">${phase.name}</div>
+        <div class="ph-right">
+          <div class="ph-pct${isDone?' done':''}" id="ph-pct">${pct}<span style="font-size:14px;opacity:0.5;font-weight:400">%</span></div>
+          <div class="ph-sub" id="ph-sub">${d} of ${t} done</div>
+        </div>
+      </div>
+      <div class="ph-bar"><div class="ph-bar-fill" id="ph-bar-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="done-banner" id="done-banner" style="display:${isDone?'flex':'none'}">
+      <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+        <path d="M1.5 5.5L5 9L12.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Phase complete — well done.
+    </div>
+    ${body}
+  `;
+}
+
+function refreshPhaseHeader() {
+  const phase = PHASES.find(p => p.id === active);
+  if (!phase) return;
+  const items = pitems(phase);
+  const d = items.filter(i => done.has(ikey(phase.id, i))).length;
+  const t = items.length;
+  const pct = t ? Math.round((d/t)*100) : 0;
+  const isDone = d === t;
+
+  const pctEl  = document.getElementById('ph-pct');
+  const subEl  = document.getElementById('ph-sub');
+  const fillEl = document.getElementById('ph-bar-fill');
+  const banner = document.getElementById('done-banner');
+
+  if (pctEl) {
+    pctEl.innerHTML = `${pct}<span style="font-size:14px;opacity:0.5;font-weight:400">%</span>`;
+    pctEl.className = 'ph-pct' + (isDone ? ' done' : '');
+  }
+  if (subEl)  subEl.textContent   = `${d} of ${t} done`;
+  if (fillEl) fillEl.style.width  = pct + '%';
+  if (banner) banner.style.display = isDone ? 'flex' : 'none';
+}
+
+function card(pid, item, idx) {
+  const k       = ikey(pid, item);
+  const checked = done.has(k);
+  return `
+    <div class="card${checked?' checked':''}" data-key="${k}" onclick="toggle('${k}')"
+         style="animation-delay:${idx*0.025}s">
+      <div class="cb">
+        <svg class="ck" width="9" height="7" viewBox="0 0 9 7" fill="none">
+          <path d="M1 3.5L3.2 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="card-name">${item}</div>
+    </div>`;
+}
+
+function setPhase(id) {
+  active = id;
+  renderMain();
+  refreshSidebar();
+  document.getElementById('main').scrollTop = 0;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
