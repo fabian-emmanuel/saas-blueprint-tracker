@@ -41,7 +41,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 
 /* ── TOPBAR ── */
 .topbar {
-  position: fixed; top: 0; left: 0; right: 0; height: 54px;
+  position: fixed; top: 0; left: 0; right: 0; height: 58px;
   background: rgba(15,17,24,0.9);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -125,7 +125,7 @@ body.light .topbar { background: rgba(240,242,248,0.92); }
 body.light .btn-theme:hover { background: var(--surface-2); }
 
 /* ── LAYOUT ── */
-.layout { display: flex; height: 100vh; padding-top: 54px; }
+.layout { display: flex; height: 100vh; padding-top: 58px; }
 
 /* ── SIDEBAR ── */
 .sidebar {
@@ -295,6 +295,15 @@ body.light .btn-theme:hover { background: var(--surface-2); }
   text-decoration: line-through;
   text-decoration-color: rgba(13,207,139,0.3);
 }
+
+.card-desc {
+  font-size: 11px; color: var(--muted); line-height: 1.5;
+  margin-top: 6px; position: relative; z-index: 1;
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.2s ease;
+}
+.card:hover .card-desc { max-height: 80px; opacity: 0.75; }
+.card.checked .card-desc { opacity: 0.45; }
 
 /* ── ONBOARDING ── */
 .onboarding {
@@ -515,6 +524,137 @@ body.light .btn-theme:hover { background: var(--surface-2); }
 </div>
 
 <script>
+// ── DESCRIPTIONS ──────────────────────────────────────────────────────────────
+
+const DESCS = {
+  'idea/Problem Discovery':      'Identify a real pain point people experience and are willing to pay to solve. This is the foundation of everything.',
+  'idea/Market Research':        'Understand the size, trends, and dynamics of the market you\'re entering. Know if there are enough customers.',
+  'idea/Niche Selection':        'Choose a specific audience segment to focus on. Narrow beats broad when starting out.',
+  'idea/Competitor Analysis':    'Map existing solutions and their weaknesses. Find where the market is underserved.',
+  'idea/Opportunity Mapping':    'Synthesize your research into a clear gap in the market that your SaaS can fill.',
+
+  'validation/Customer Interviews': 'Talk to 10–20 potential customers to validate the pain and your proposed solution. Don\'t build before you listen.',
+  'validation/Landing Page Test':   'Create a simple landing page describing your product. Measure how many visitors take action.',
+  'validation/Waitlist':            'Collect email signups before you build. Early signups signal genuine demand.',
+  'validation/Pre Sales':           'Charge for access before the product is complete. Nothing validates demand like real money.',
+  'validation/Demand Testing':      'Run ads or experiments to measure how many people click to learn more or sign up.',
+
+  'planning/Product Roadmap':          'Define your product vision and the milestones to get there over the next 6–12 months.',
+  'planning/Feature Prioritization':   'Rank features by impact vs effort. Focus only on what moves the needle.',
+  'planning/MVP Scope':                'Define the absolute minimum feature set needed to deliver value and get paying customers.',
+  'planning/Tech Stack':               'Choose languages, frameworks, and infrastructure that match your team\'s skills and scalability needs.',
+  'planning/Development Plan':         'Break the MVP into sprints with clear deliverables and timelines.',
+  'planning/Pricing Strategy':         'Decide how you\'ll charge — subscription, usage-based, tiered — and at what price point.',
+
+  'legal/Business Entity':         'Incorporate your company (LLC, C-Corp, etc.) to protect personal liability and accept payments.',
+  'legal/Terms of Service':        'Define the rules of using your product. Protect yourself legally and set user expectations.',
+  'legal/Privacy Policy':          'Disclose what data you collect and how you use it. Required by law in most jurisdictions.',
+  'legal/GDPR & CCPA':             'Ensure your data collection, storage, and processing comply with EU and California privacy laws.',
+  'legal/SOC2 & Certifications':   'Obtain security certifications that enterprise customers require before signing contracts.',
+  'legal/Billing Compliance':      'Ensure payment processing meets PCI-DSS standards and handles tax compliance properly.',
+
+  'design/Wireframes':      'Sketch low-fidelity layouts of every key screen before writing a line of code.',
+  'design/UI Design':       'Create polished, pixel-perfect designs in a tool like Figma that developers can build from.',
+  'design/UX Flows':        'Map the full user journey from signup to core value delivery. Identify friction and drop-off points.',
+  'design/Prototype':       'Build a clickable prototype to test the experience with real users before development.',
+  'design/Design System':   'Create a component library with consistent colors, typography, and UI elements for your team.',
+
+  'development/Frontend':            'Build the user-facing interface your customers will interact with every day.',
+  'development/Backend':             'Build the server-side logic, business rules, and data processing that powers your product.',
+  'development/APIs':                'Design and build the interfaces that connect your frontend, backend, and third-party services.',
+  'development/Database':            'Set up and model your data storage with the right schema, indexes, and backup strategy.',
+  'development/Authentication':      'Implement secure user login, signup, OAuth, and session management.',
+  'development/Integrations':        'Connect to the third-party tools your customers already use — Slack, Zapier, Stripe, and more.',
+  'development/Cloud Hosting':       'Deploy your app to a reliable cloud provider with the right compute and storage resources.',
+  'development/DevOps':              'Set up environments (dev, staging, prod) and streamline the path from code to deployment.',
+  'development/CI/CD':               'Automate testing and deployment so every code change is validated and shipped without manual steps.',
+  'development/Monitoring':          'Track uptime, errors, and performance in real time so you catch issues before customers do.',
+  'development/Security':            'Harden your app against common vulnerabilities — OWASP Top 10, secrets management, access control.',
+  'development/Incident Response':   'Define a clear process for detecting, responding to, and communicating outages to users.',
+  'development/Engineering Docs':    'Document architecture decisions, system design, and internal processes for your team.',
+  'development/API Docs':            'Write clear documentation for every endpoint so developers can integrate with your product.',
+  'development/Runbooks':            'Create step-by-step guides for common operational tasks and incident resolution.',
+  'development/User Docs':           'Write help articles, guides, and FAQs so customers can self-serve answers without contacting support.',
+
+  'testing/Unit Testing':        'Test individual functions and components in isolation to catch logic bugs early.',
+  'testing/Integration Testing': 'Verify that different parts of your system work correctly together end-to-end.',
+  'testing/Bug Fixing':          'Triage and resolve bugs discovered during testing before shipping to real users.',
+  'testing/Performance Testing': 'Load test your app to ensure it handles expected user volume without degrading.',
+  'testing/Beta Testing':        'Give early access to a small group of real users to find real-world issues before public launch.',
+
+  'launch/Landing Page':              'Your public-facing page that converts visitors into signups or paying customers.',
+  'launch/Product Hunt':              'Submit to Product Hunt for a concentrated burst of early adopters, press, and feedback.',
+  'launch/Beta Users':                'Engage your beta users with hands-on onboarding and iterate rapidly based on their feedback.',
+  'launch/Early Adopters':            'Convert beta users into paying customers — your first real revenue validation.',
+  'launch/Public Release':            'Open the product to everyone. The moment your SaaS officially goes live.',
+  'launch/Changelog & Release Notes': 'Communicate every update to users to build trust and showcase ongoing momentum.',
+
+  'acquisition/SEO Wins':                      'Target high-intent keywords your customers search for. Compound organic traffic over time.',
+  'acquisition/Content Marketing':             'Publish valuable content that attracts your audience and builds authority in your niche.',
+  'acquisition/Social Media':                  'Build a presence on the platforms where your customers spend time. Consistency beats perfection.',
+  'acquisition/Cold Email':                    'Reach out directly to ideal customers with personalized, value-first outreach.',
+  'acquisition/Influencer Outreach':           'Partner with creators and thought leaders in your space to reach their established audiences.',
+  'acquisition/Affiliate Marketing':           'Build a network of partners who earn a commission for every customer they refer.',
+  'acquisition/Directories & SaaS Marketplaces': 'List on G2, Capterra, Product Hunt, and other directories for passive, long-tail discovery.',
+  'acquisition/Communities':                   'Engage authentically in communities where your customers hang out — Reddit, Slack, Discord.',
+  'acquisition/Partnerships':                  'Form strategic partnerships with complementary products to reach each other\'s audiences.',
+
+  'conversion/Sales Funnel':          'Map and optimize every step from first touch to paid customer. Measure and improve each stage.',
+  'conversion/Free Trial':            'Offer a time-limited trial to let prospects experience value before committing to pay.',
+  'conversion/Freemium Model':        'Offer a permanently free tier that creates a pipeline of users who eventually upgrade.',
+  'conversion/Pricing Page':          'Design a clear, compelling pricing page that makes choosing a plan feel easy and obvious.',
+  'conversion/Checkout Optimization': 'Remove friction from the payment flow — every extra step loses you customers.',
+
+  'revenue/Subscriptions':    'Set up recurring billing as your core revenue model for predictable, compounding growth.',
+  'revenue/Upsells':          'Identify and offer higher-tier plans at the right moment in the customer journey.',
+  'revenue/Add-ons':          'Build optional paid features that customers can purchase alongside their base plan.',
+  'revenue/Annual Plans':     'Offer discounted annual billing to improve cash flow and reduce churn significantly.',
+  'revenue/Enterprise Deals': 'Develop a sales process for large contracts with custom pricing, SLAs, and procurement.',
+
+  'finance/Runway & Burn Rate':      'Know exactly how many months of cash you have and how fast you\'re spending it.',
+  'finance/MRR & ARR Tracking':      'Track monthly and annual recurring revenue as the primary health metric of your SaaS.',
+  'finance/Payment Infrastructure':  'Ensure your payment stack handles subscriptions, refunds, failed charges, and tax correctly.',
+  'finance/Tax & Accounting':        'Stay on top of sales tax, VAT, and accounting practices before they become a problem.',
+  'finance/Fundraising':             'Prepare pitch materials, financial models, and investor outreach if you choose to raise capital.',
+
+  'analytics/User Tracking':    'Instrument your product to capture how users actually interact with every feature.',
+  'analytics/Funnel Analysis':  'Identify where users drop off in your acquisition and activation funnel.',
+  'analytics/Cohort Analysis':  'Compare behavior of users who signed up in different periods to spot retention trends.',
+  'analytics/KPI Dashboard':    'Build a live dashboard of the 5–10 metrics that matter most to your business.',
+  'analytics/A/B Testing':      'Run controlled experiments to systematically improve conversion, retention, and revenue.',
+
+  'feedback/User Interviews':    'Regularly talk to customers to understand what\'s working, what\'s broken, and what to build next.',
+  'feedback/Feature Requests':   'Collect, prioritize, and communicate back on the features customers ask for.',
+  'feedback/Bug Reports':        'Track and triage bugs reported by customers with a clear resolution SLA.',
+  'feedback/Public Roadmap':     'Share your product roadmap publicly to build trust and signal what\'s coming next.',
+  'feedback/Release Loop':       'Ship improvements on a regular cadence. Sustained momentum builds customer trust.',
+
+  'retention/User Onboarding':       'Design a guided experience that gets new users to their "aha moment" as quickly as possible.',
+  'retention/Email Automation':      'Set up lifecycle emails — welcome, activation, re-engagement — triggered by user behavior.',
+  'retention/Feature Adoption':      'Identify underused features and find ways to surface and demonstrate their value.',
+  'retention/Churn Reduction':       'Analyze why customers cancel and address root causes before they reach the exit door.',
+  'retention/Win-back Campaigns':    'Reach out to churned customers with compelling offers to bring them back.',
+
+  'customer-success/Onboarding Support':    'Provide hands-on help during the critical first days and weeks of a new customer\'s journey.',
+  'customer-success/Health Scoring':        'Develop a scoring model to identify at-risk customers before they churn.',
+  'customer-success/QBRs & Check-ins':      'Hold regular business reviews with key accounts to demonstrate value and align on goals.',
+  'customer-success/Help Desk & Ticketing': 'Run a responsive support operation with tracked tickets and clear response times.',
+  'customer-success/Customer Support':      'Build a culture of fast, helpful, empathetic support as a genuine competitive advantage.',
+
+  'growth/Referral Programs':      'Turn happy customers into a sales channel by rewarding them for spreading the word.',
+  'growth/Community Building':     'Create a space — Slack, Discord, forum — where your customers connect with each other.',
+  'growth/Product Led Growth':     'Engineer your product so that using it naturally leads to more users and expansion.',
+  'growth/Viral Loops':            'Build mechanics into your product where each user brings in new users through invites or sharing.',
+  'growth/Expansion Strategy':     'Identify opportunities to expand into adjacent markets, use cases, or customer segments.',
+
+  'scaling/Automation':          'Replace manual, repeatable work with software to let your team focus on high-leverage tasks.',
+  'scaling/Hiring':              'Build the team you need to sustain and accelerate growth without burning out your current people.',
+  'scaling/Systems & Processes': 'Document and systematize how your company operates so quality doesn\'t depend on individuals.',
+  'scaling/Localization & i18n': 'Adapt your product for new languages and regions to unlock global market opportunities.',
+  'scaling/Global Expansion':    'Enter new geographic markets with localized go-to-market strategies and regional support.',
+  'scaling/Exit Strategy':       'Define what success looks like — acquisition, IPO, or profitable independent operation.',
+};
+
 // ── DATA ──────────────────────────────────────────────────────────────────────
 
 const STAGES = [
@@ -789,6 +929,7 @@ function refreshPhaseHeader() {
 function card(pid, item, idx) {
   const k       = ikey(pid, item);
   const checked = done.has(k);
+  const desc    = DESCS[`${pid}/${item}`] || '';
   return `
     <div class="card${checked?' checked':''}" data-key="${k}" onclick="toggle('${k}')"
          style="animation-delay:${idx*0.025}s">
@@ -797,7 +938,10 @@ function card(pid, item, idx) {
           <path d="M1 3.5L3.2 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="card-name">${item}</div>
+      <div>
+        <div class="card-name">${item}</div>
+        ${desc ? `<div class="card-desc">${desc}</div>` : ''}
+      </div>
     </div>`;
 }
 

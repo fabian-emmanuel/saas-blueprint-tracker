@@ -193,7 +193,49 @@ Use these to sync progress to your backend, trigger analytics events, unlock fea
 
 ---
 
+## Contributing
+
+Contributions are welcome. Here's how:
+
+### Reporting a bug
+
+Open an issue with:
+- A clear title describing the bug
+- Steps to reproduce it
+- Expected vs actual behaviour
+- Browser/OS if relevant
+
+### Suggesting a milestone or phase
+
+Have a step that belongs in the blueprint? Open an issue titled **"Milestone suggestion: [name]"** and explain:
+- Which phase it fits into (or suggest a new one)
+- Why it matters for SaaS builders
+- Any sources or references
+
+### Submitting a pull request
+
+1. Fork the repo and create a branch from `master`
+2. Make your change — keep it focused and minimal
+3. Test it in a browser (open `saas-blueprint-tracker.html` directly)
+4. Open a PR with a clear description of what changed and why
+
+**What's in scope:** new milestones, improved descriptions, bug fixes, accessibility improvements, documentation.
+
+**What's out of scope:** adding dependencies, changing the zero-dependency architecture, major redesigns.
+
+---
+
 ## Changelog
+
+### v1.1.0
+- Export / import progress as JSON
+- First-visit onboarding modal
+- Next-phase nudge after completing a phase
+- Milestone descriptions (hover to reveal on all 109 items)
+- Mobile navigation drawer
+- Unified button styles and nav height across all pages
+- Open Graph and Twitter Card meta tags on all pages
+- Improved page titles for SEO
 
 ### v1.0.0
 - Initial release
