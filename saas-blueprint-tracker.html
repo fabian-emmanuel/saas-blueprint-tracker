@@ -70,6 +70,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 }
 .btn-reset:hover { color: var(--text); border-color: var(--border-2); }
 
+.btn-home {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); text-decoration: none;
+  padding: 6px 12px; border-radius: 5px; border: 1px solid var(--border);
+  transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 5px;
+}
+.btn-home:hover { color: var(--text); border-color: var(--border-2); }
+
 .btn-theme {
   width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
   background: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -299,6 +307,7 @@ body.light .btn-theme:hover { background: var(--surface-2); }
     </svg>
   </button>
   <button class="btn-reset" onclick="resetAll()">Reset</button>
+  <a href="landing.html" class="btn-home" title="Back to home">← Home</a>
 </header>
 
 <div class="layout">
