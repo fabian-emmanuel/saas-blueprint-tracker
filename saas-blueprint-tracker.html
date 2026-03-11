@@ -315,6 +315,16 @@ body.light .btn-theme:hover { background: var(--surface-2); }
 .card:hover .card-desc { max-height: 80px; opacity: 0.75; }
 .card.checked .card-desc { opacity: 0.45; }
 
+/* Touch devices: tap to expand description + show doc button */
+@media (hover: none) {
+  .card-desc { max-height: 0; opacity: 0; }
+  .card.expanded .card-desc { max-height: 80px; opacity: 0.75; }
+  .card.expanded.checked .card-desc { opacity: 0.45; }
+  .card-doc-btn { opacity: 0; }
+  .card.expanded .card-doc-btn,
+  .card-doc-btn.has-notes { opacity: 1; }
+}
+
 /* ── ONBOARDING ── */
 .onboarding {
   position: fixed; inset: 0; z-index: 500;
@@ -849,7 +859,21 @@ let toastT;
 
 const save = () => lsSet(KEY, [...done]);
 
+// On touch devices, first tap expands the card to show description + doc btn.
+// Second tap on an already-expanded card actually toggles the milestone.
+const isTouchPrimary = window.matchMedia('(hover: none)').matches;
+
 function toggle(key) {
+  if (isTouchPrimary) {
+    const cardEl = document.querySelector(`[data-key="${key}"]`);
+    if (cardEl && !cardEl.classList.contains('expanded')) {
+      // First tap — expand only, collapse any other open cards
+      document.querySelectorAll('.card.expanded').forEach(c => c.classList.remove('expanded'));
+      cardEl.classList.add('expanded');
+      return;
+    }
+  }
+
   const was = done.has(key);
   was ? done.delete(key) : done.add(key);
   save();
@@ -1101,7 +1125,7 @@ function card(pid, item, idx) {
 function setPhase(id) {
   active = id;
   history.replaceState(null, '', `#${id}`);
-  renderMain();
+  renderMain(); // re-renders all cards, so expanded state resets automatically
   refreshSidebar();
   document.getElementById('main').scrollTop = 0;
 }
