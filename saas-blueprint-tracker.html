@@ -1316,7 +1316,8 @@ function exportProgress() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = `saas-blueprint-${new Date().toISOString().slice(0,10)}.json`;
+  const dateStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, no colons
+  a.download = `saas-blueprint-${dateStr}.json`;
   a.click();
   URL.revokeObjectURL(url);
   toast('Progress exported');
