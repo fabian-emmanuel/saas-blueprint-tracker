@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![GitHub release](https://img.shields.io/github/v/release/fabian-emmanuel/saas-blueprint-tracker?style=for-the-badge)](https://github.com/fabian-emmanuel/saas-blueprint-tracker/releases)
+[![GitHub stars](https://img.shields.io/github/stars/fabian-emmanuel/saas-blueprint-tracker?style=for-the-badge)](https://github.com/fabian-emmanuel/saas-blueprint-tracker/stargazers)
 [![Demo](https://img.shields.io/badge/Live_Demo-→-F0A500?style=for-the-badge)](https://saas-blueprint-tracker.pages.dev/saas-blueprint-demo.html)
 
 An interactive Web Component that tracks your SaaS journey from idea to exit — **18 phases, 109 milestones, zero dependencies.**
@@ -189,6 +190,19 @@ Use these to sync progress to your backend, trigger analytics events, unlock fea
 | `saas-blueprint-tracker.html` | Standalone tracker — open directly in a browser, no server needed |
 | `saas-blueprint-demo.html` | Demo/landing page with live preview and embed code examples |
 | `saas-blueprint.md` | The raw blueprint as a folder tree |
+
+---
+
+## Changelog
+
+### v1.0.0
+- Initial release
+- 18 phases, 109 milestones covering the full SaaS lifecycle
+- Zero-dependency Web Component with Shadow DOM
+- Dark & Light theme support
+- Multi-project localStorage namespacing
+- Custom events: `item-toggle` and `phase-complete`
+- Works in React, Vue, Angular, plain HTML, WordPress, Webflow
 
 ---
 
