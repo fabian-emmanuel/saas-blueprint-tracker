@@ -435,7 +435,108 @@ body.light .btn-theme:hover { background: var(--surface-2); }
   flex: 1; justify-content: center; padding: 8px;
 }
 
+/* ── CARD DOC BUTTON ── */
+.card-doc-btn {
+  position: absolute; top: 7px; right: 7px;
+  width: 22px; height: 22px; border-radius: 4px;
+  border: 1px solid transparent; background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--dim); transition: all 0.15s; flex-shrink: 0; z-index: 2;
+  opacity: 0;
+}
+.card:hover .card-doc-btn { opacity: 1; color: var(--muted); border-color: var(--border); }
+.card-doc-btn:hover { color: var(--accent) !important; border-color: rgba(240,165,0,0.3) !important; background: var(--accent-glow); }
+.card-doc-btn.has-notes { opacity: 1; color: var(--accent); border-color: rgba(240,165,0,0.25); }
+
+/* ── DOC PANEL ── */
+.doc-panel {
+  position: fixed; top: 58px; right: 0; bottom: 0;
+  width: calc(100% - 248px);
+  background: var(--bg); border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  z-index: 150; overflow: hidden;
+}
+.doc-panel.open { transform: translateX(0); }
+
+.doc-head {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 36px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.doc-back {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); background: none;
+  border: 1px solid var(--border); border-radius: 4px; padding: 5px 12px;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.doc-back:hover { color: var(--text); border-color: var(--border-2); }
+
+.doc-head-meta { flex: 1; min-width: 0; }
+.doc-head-phase {
+  font-family: var(--font-m); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 3px;
+}
+.doc-head-title {
+  font-family: var(--font-d); font-style: italic; font-weight: 700;
+  font-size: 20px; letter-spacing: -0.02em; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.doc-save-status {
+  font-family: var(--font-m); font-size: 10px; color: var(--dim);
+  letter-spacing: 0.06em; transition: color 0.3s; flex-shrink: 0;
+}
+.doc-save-status.saved { color: var(--green); }
+
+.doc-export-md {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); background: none;
+  border: 1px solid var(--border); border-radius: 4px; padding: 5px 12px;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.doc-export-md:hover { color: var(--accent); border-color: rgba(240,165,0,0.35); }
+
+.doc-body {
+  flex: 1; overflow-y: auto; padding: 36px 44px 60px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.doc-body::-webkit-scrollbar { width: 5px; }
+.doc-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.doc-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.65;
+  margin-bottom: 36px; max-width: 640px;
+  padding-bottom: 28px; border-bottom: 1px solid var(--border);
+}
+
+.doc-section { margin-bottom: 28px; max-width: 640px; }
+.doc-section-label {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
+}
+.doc-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.doc-textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 14px; color: var(--text);
+  font-family: var(--font-ui); font-size: 13.5px; line-height: 1.7;
+  resize: none; min-height: 80px; overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+.doc-textarea:focus { outline: none; border-color: var(--border-2); background: var(--surface-2); }
+.doc-textarea::placeholder { color: var(--dim); }
+
 /* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .doc-panel { width: 100%; left: 0; border-left: none; }
+  .doc-head { padding: 12px 16px; }
+  .doc-body { padding: 24px 16px 60px; }
+  .doc-section { max-width: 100%; }
+  .doc-desc { max-width: 100%; }
+}
+
 @media (max-width: 700px) {
   .sidebar { display: none; }
   .btn-menu { display: flex; }
@@ -494,6 +595,20 @@ body.light .btn-theme:hover { background: var(--surface-2); }
     <label class="btn-import">Import<input type="file" accept=".json" style="display:none" onchange="importProgress(this);closeDrawer()"></label>
     <button class="btn-reset" onclick="resetAll();closeDrawer()">Reset</button>
   </div>
+</div>
+
+<!-- DOC PANEL -->
+<div class="doc-panel" id="docPanel">
+  <div class="doc-head">
+    <button class="doc-back" onclick="closeDoc()">← Back</button>
+    <div class="doc-head-meta">
+      <div class="doc-head-phase" id="docHeadPhase"></div>
+      <div class="doc-head-title" id="docHeadTitle"></div>
+    </div>
+    <span class="doc-save-status" id="docSaveStatus"></span>
+    <button class="doc-export-md" onclick="exportDocMd()">Export MD</button>
+  </div>
+  <div class="doc-body" id="docBody"></div>
 </div>
 
 <!-- ONBOARDING -->
@@ -927,9 +1042,10 @@ function refreshPhaseHeader() {
 }
 
 function card(pid, item, idx) {
-  const k       = ikey(pid, item);
-  const checked = done.has(k);
-  const desc    = DESCS[`${pid}/${item}`] || '';
+  const k        = ikey(pid, item);
+  const checked  = done.has(k);
+  const desc     = DESCS[`${pid}/${item}`] || '';
+  const hn       = hasNote(pid, item);
   return `
     <div class="card${checked?' checked':''}" data-key="${k}" onclick="toggle('${k}')"
          style="animation-delay:${idx*0.025}s">
@@ -942,6 +1058,13 @@ function card(pid, item, idx) {
         <div class="card-name">${item}</div>
         ${desc ? `<div class="card-desc">${desc}</div>` : ''}
       </div>
+      <button class="card-doc-btn${hn?' has-notes':''}"
+        onclick="event.stopPropagation();openDoc('${pid}','${item}')"
+        title="${hn?'Edit notes':'Add notes'}">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+          <path d="M1.5 9.5h8M7.5 1.5l2 2-5.5 5.5-2.5.5.5-2.5L7.5 1.5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>`;
 }
 
@@ -966,6 +1089,205 @@ function renderNextNudge(phase, isDone) {
     </div>`;
 }
 
+// ── PRD TEMPLATES ─────────────────────────────────────────────────────────────
+
+const TEMPLATES = {
+  idea: [
+    { label: 'Problem / Pain Point',   placeholder: 'What specific problem are you solving? Who feels this pain and how badly?' },
+    { label: 'Target Customer',         placeholder: 'Who is your ideal customer? Be as specific as possible.' },
+    { label: 'Research Notes',          placeholder: 'Key findings from research, conversations, or data.' },
+    { label: 'Decision / Next Step',    placeholder: 'What did you decide, or what needs to happen next?' },
+  ],
+  validation: [
+    { label: 'Hypothesis',    placeholder: 'What assumption are you testing?' },
+    { label: 'Method',        placeholder: 'How are you testing it? (interviews, ads, landing page, etc.)' },
+    { label: 'Results',       placeholder: 'What did you find?' },
+    { label: 'Decision',      placeholder: 'What will you do based on the results?' },
+  ],
+  planning: [
+    { label: 'Goal',           placeholder: 'What outcome does completing this milestone achieve?' },
+    { label: 'Scope / Details', placeholder: 'Key decisions, constraints, or specifics.' },
+    { label: 'Dependencies',   placeholder: 'What needs to be in place first?' },
+    { label: 'Open Questions', placeholder: 'What still needs to be figured out?' },
+  ],
+  legal: [
+    { label: 'Status',                   placeholder: 'Not started · In progress · Done' },
+    { label: 'Provider / Tool / Service', placeholder: 'e.g. Stripe Atlas, Clerky, Termly, etc.' },
+    { label: 'Requirements / Notes',      placeholder: 'Key details, deadlines, or compliance requirements.' },
+    { label: 'Done Criteria',             placeholder: 'How will you know this is fully complete?' },
+  ],
+  design: [
+    { label: 'Goal',                     placeholder: 'What should this design achieve?' },
+    { label: 'References / Inspiration', placeholder: 'Links, screenshots, or notes on design direction.' },
+    { label: 'Key Decisions',            placeholder: 'Important design choices and their rationale.' },
+    { label: 'Open Questions',           placeholder: 'What still needs to be resolved?' },
+  ],
+  development: [
+    { label: 'Problem Statement',   placeholder: 'What problem does this solve for the user or system?' },
+    { label: 'Target Users',        placeholder: 'Who will use or be affected by this?' },
+    { label: 'Requirements',        placeholder: 'What must this do? List functional requirements.' },
+    { label: 'Edge Cases',          placeholder: 'What unusual or error scenarios need to be handled?' },
+    { label: 'Acceptance Criteria', placeholder: 'How will you know this is done and working correctly?' },
+  ],
+  testing: [
+    { label: 'Test Cases',  placeholder: 'List the scenarios you need to test.' },
+    { label: 'Bugs Found',  placeholder: 'Issues discovered during testing.' },
+    { label: 'Status',      placeholder: 'Current testing status and any outstanding issues.' },
+  ],
+  launch: [
+    { label: 'Goal',            placeholder: 'What does success look like for this launch activity?' },
+    { label: 'Approach',        placeholder: 'How will you execute this?' },
+    { label: 'Progress Notes',  placeholder: 'Running notes on what happened.' },
+    { label: 'Success Metric',  placeholder: 'How will you measure if this worked?' },
+  ],
+  growth: [
+    { label: 'Goal',               placeholder: 'What metric or outcome are you targeting?' },
+    { label: 'Approach / Tactics', placeholder: 'What specifically will you do?' },
+    { label: 'Progress Notes',     placeholder: 'What happened, what worked, what didn\'t.' },
+    { label: 'Success Metric',     placeholder: 'How will you measure success?' },
+  ],
+  finance: [
+    { label: 'Current State',  placeholder: 'What\'s the current situation?' },
+    { label: 'Target / Goal',  placeholder: 'What are you trying to achieve?' },
+    { label: 'Tools / Setup',  placeholder: 'Software, services, or processes you\'re using.' },
+    { label: 'Notes',          placeholder: 'Any other relevant details.' },
+  ],
+  feedback: [
+    { label: 'Key Insights',  placeholder: 'What did you learn from customers?' },
+    { label: 'Action Items',  placeholder: 'What will you change or build based on this?' },
+    { label: 'Notes',         placeholder: 'Additional context or raw notes.' },
+  ],
+};
+
+const PHASE_TEMPLATE = {
+  idea: 'idea', validation: 'validation', planning: 'planning',
+  legal: 'legal', design: 'design', development: 'development',
+  testing: 'testing', launch: 'launch',
+  acquisition: 'growth', conversion: 'growth', revenue: 'finance',
+  finance: 'finance', analytics: 'finance', feedback: 'feedback',
+  retention: 'growth', 'customer-success': 'growth', growth: 'growth', scaling: 'growth',
+};
+
+// ── NOTES STORAGE ─────────────────────────────────────────────────────────────
+
+const NOTES_KEY = 'saas-bp-notes-v1';
+let notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
+const saveNotes = () => localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+
+const noteKey = (pid, item) => `${pid}/${item}`;
+const hasNote  = (pid, item) => {
+  const n = notes[noteKey(pid, item)];
+  return n && n.some(v => v && v.trim().length > 0);
+};
+
+// ── DOC PANEL ─────────────────────────────────────────────────────────────────
+
+let docSaveTimer;
+let currentDocKey = null;
+
+function openDoc(pid, item) {
+  const phase    = PHASES.find(p => p.id === pid);
+  const desc     = DESCS[`${pid}/${item}`] || '';
+  const tmplKey  = PHASE_TEMPLATE[pid] || 'growth';
+  const sections = TEMPLATES[tmplKey];
+  const nk       = noteKey(pid, item);
+  const saved    = notes[nk] || sections.map(() => '');
+
+  currentDocKey = nk;
+
+  document.getElementById('docHeadPhase').textContent = phase ? phase.name : pid;
+  document.getElementById('docHeadTitle').textContent = item;
+  document.getElementById('docSaveStatus').textContent = '';
+  document.getElementById('docSaveStatus').classList.remove('saved');
+
+  const body = document.getElementById('docBody');
+  body.innerHTML = `
+    ${desc ? `<div class="doc-desc">${desc}</div>` : ''}
+    ${sections.map((s, i) => `
+      <div class="doc-section">
+        <div class="doc-section-label">${s.label}</div>
+        <textarea class="doc-textarea" data-idx="${i}" placeholder="${s.placeholder}"
+          oninput="handleDocInput(this)">${escHtml(saved[i] || '')}</textarea>
+      </div>
+    `).join('')}
+  `;
+
+  // Auto-resize all textareas
+  body.querySelectorAll('.doc-textarea').forEach(autoResize);
+
+  document.getElementById('docPanel').classList.add('open');
+  body.scrollTop = 0;
+}
+
+function closeDoc() {
+  document.getElementById('docPanel').classList.remove('open');
+  currentDocKey = null;
+  // Refresh cards to update doc dots
+  renderMain();
+  refreshSidebar();
+}
+
+function handleDocInput(el) {
+  autoResize(el);
+
+  // Collect all section values
+  const body     = document.getElementById('docBody');
+  const vals     = [...body.querySelectorAll('.doc-textarea')].map(t => t.value);
+  notes[currentDocKey] = vals;
+
+  // Debounced save
+  const statusEl = document.getElementById('docSaveStatus');
+  statusEl.textContent = 'Saving…';
+  statusEl.classList.remove('saved');
+  clearTimeout(docSaveTimer);
+  docSaveTimer = setTimeout(() => {
+    saveNotes();
+    statusEl.textContent = 'Saved';
+    statusEl.classList.add('saved');
+    setTimeout(() => {
+      statusEl.textContent = '';
+      statusEl.classList.remove('saved');
+    }, 2000);
+  }, 600);
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.max(80, el.scrollHeight) + 'px';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function exportDocMd() {
+  if (!currentDocKey) return;
+  const [pid, ...itemParts] = currentDocKey.split('/');
+  const item     = itemParts.join('/');
+  const phase    = PHASES.find(p => p.id === pid);
+  const tmplKey  = PHASE_TEMPLATE[pid] || 'growth';
+  const sections = TEMPLATES[tmplKey];
+  const saved    = notes[currentDocKey] || [];
+
+  let md = `# ${item}\n\n`;
+  if (phase) md += `**Phase:** ${phase.name}\n\n`;
+  const desc = DESCS[`${pid}/${item}`];
+  if (desc) md += `> ${desc}\n\n---\n\n`;
+
+  sections.forEach((s, i) => {
+    const val = (saved[i] || '').trim();
+    md += `## ${s.label}\n\n${val || '*No notes yet.*'}\n\n`;
+  });
+
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${item.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ── ONBOARDING ────────────────────────────────────────────────────────────────
 
 const OB_KEY = 'saas-bp-welcomed';
@@ -985,9 +1307,10 @@ function dismissOnboarding() {
 
 function exportProgress() {
   const data = {
-    version: 1,
+    version: 2,
     exported: new Date().toISOString(),
     progress: [...done],
+    notes,
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
@@ -1010,6 +1333,10 @@ function importProgress(input) {
       if (!keys) throw new Error('Invalid format');
       done = new Set(keys);
       save();
+      if (data.notes && typeof data.notes === 'object') {
+        notes = data.notes;
+        saveNotes();
+      }
       renderAll();
       toast(`Imported ${keys.length} items`);
     } catch {
