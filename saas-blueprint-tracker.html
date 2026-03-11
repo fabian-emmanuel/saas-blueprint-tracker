@@ -223,6 +223,14 @@ body.light .btn-theme:hover { background: var(--surface-2); }
   font-size: 13px; color: var(--green); font-weight: 500;
   animation: fadeUp 0.3s ease;
 }
+.done-banner-dismiss {
+  margin-left: auto; width: 20px; height: 20px; flex-shrink: 0;
+  border-radius: 4px; border: none; background: none; cursor: pointer;
+  color: rgba(13,207,139,0.5); font-size: 14px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.15s;
+}
+.done-banner-dismiss:hover { color: var(--green); }
 
 /* ── NEXT PHASE NUDGE ── */
 .next-nudge {
@@ -370,6 +378,7 @@ body.light .btn-theme:hover { background: var(--surface-2); }
   pointer-events: none;
 }
 .toast.show { transform: translateY(0) scale(1); opacity: 1; }
+.toast.warn { border-color: rgba(240,165,0,0.35); color: var(--accent); }
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
@@ -816,11 +825,27 @@ const pDone  = p  => pitems(p).filter(i => done.has(ikey(p.id,i))).length;
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
 const KEY = 'saas-bp-v1';
-let done   = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+
+function lsGet(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) ?? 'null') ?? fallback; }
+  catch { return fallback; }
+}
+
+function lsSet(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    if (e instanceof DOMException && (e.name === 'QuotaExceededError' || e.code === 22)) {
+      toast('Storage full — progress may not be saved. Export your data.', true);
+    }
+  }
+}
+
+let done   = new Set(lsGet(KEY, []));
 let active = PHASES[0].id;
 let toastT;
 
-const save = () => localStorage.setItem(KEY, JSON.stringify([...done]));
+const save = () => lsSet(KEY, [...done]);
 
 function toggle(key) {
   const was = done.has(key);
@@ -885,17 +910,18 @@ function applyTheme(t) {
 }
 function toggleTheme() {
   const next = document.body.classList.contains('light') ? 'dark' : 'light';
-  localStorage.setItem(THEME_KEY, next);
+  lsSet(THEME_KEY, next);
   applyTheme(next);
 }
-applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+applyTheme(lsGet(THEME_KEY, null) || 'dark');
 
-function toast(msg) {
+function toast(msg, isWarning = false) {
   const el  = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
+  el.classList.toggle('warn', isWarning);
   el.classList.add('show');
   clearTimeout(toastT);
-  toastT = setTimeout(() => el.classList.remove('show'), 3000);
+  toastT = setTimeout(() => el.classList.remove('show'), isWarning ? 6000 : 3000);
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
@@ -1003,6 +1029,7 @@ function renderMain() {
         <path d="M1.5 5.5L5 9L12.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       Phase complete — well done.
+      <button class="done-banner-dismiss" onclick="this.closest('.done-banner').style.display='none'" title="Dismiss">✕</button>
     </div>
     ${renderNextNudge(phase, isDone)}
     ${body}
@@ -1171,8 +1198,8 @@ const PHASE_TEMPLATE = {
 // ── NOTES STORAGE ─────────────────────────────────────────────────────────────
 
 const NOTES_KEY = 'saas-bp-notes-v1';
-let notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
-const saveNotes = () => localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+let notes = lsGet(NOTES_KEY, {});
+const saveNotes = () => lsSet(NOTES_KEY, notes);
 
 const noteKey = (pid, item) => `${pid}/${item}`;
 const hasNote  = (pid, item) => {
@@ -1293,13 +1320,13 @@ function exportDocMd() {
 const OB_KEY = 'saas-bp-welcomed';
 
 function showOnboardingIfNeeded() {
-  if (!localStorage.getItem(OB_KEY) && done.size === 0) {
+  if (!lsGet(OB_KEY, null) && done.size === 0) {
     document.getElementById('onboarding').classList.remove('hidden');
   }
 }
 
 function dismissOnboarding() {
-  localStorage.setItem(OB_KEY, '1');
+  lsSet(OB_KEY, '1');
   document.getElementById('onboarding').classList.add('hidden');
 }
 
