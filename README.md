@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![GitHub release](https://img.shields.io/github/v/release/fabian-emmanuel/saas-blueprint-tracker?style=for-the-badge)](https://github.com/fabian-emmanuel/saas-blueprint-tracker/releases)
-[![Demo](https://img.shields.io/badge/Live_Demo-→-F0A500?style=for-the-badge)](https://fabian-emmanuel.github.io/saas-blueprint-tracker/saas-blueprint-demo.html)
+[![Demo](https://img.shields.io/badge/Live_Demo-→-F0A500?style=for-the-badge)](https://saas-blueprint-tracker.pages.dev/saas-blueprint-demo.html)
 
 An interactive Web Component that tracks your SaaS journey from idea to exit — **18 phases, 109 milestones, zero dependencies.**
 
@@ -14,7 +14,7 @@ An interactive Web Component that tracks your SaaS journey from idea to exit —
 
 ```html
 <!-- 1. Load the component -->
-<script src="https://fabian-emmanuel.github.io/saas-blueprint-tracker/saas-blueprint-tracker.js"></script>
+<script src="https://saas-blueprint-tracker.pages.dev/saas-blueprint-tracker.js"></script>
 
 <!-- 2. Use it anywhere -->
 <saas-blueprint-tracker style="height: 700px"></saas-blueprint-tracker>
@@ -135,7 +135,7 @@ export class AppModule {}
 Paste anywhere:
 
 ```html
-<script src="https://fabian-emmanuel.github.io/saas-blueprint-tracker/saas-blueprint-tracker.js"></script>
+<script src="https://saas-blueprint-tracker.pages.dev/saas-blueprint-tracker.js"></script>
 <saas-blueprint-tracker style="height: 700px"></saas-blueprint-tracker>
 ```
 
