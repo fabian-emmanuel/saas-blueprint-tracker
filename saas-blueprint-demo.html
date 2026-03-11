@@ -526,7 +526,8 @@ function togglePageTheme() {
   localStorage.setItem(PAGE_THEME_KEY, next);
   applyPageTheme(next);
 }
-applyPageTheme(localStorage.getItem(PAGE_THEME_KEY) || 'dark');
+const sysTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+applyPageTheme(localStorage.getItem(PAGE_THEME_KEY) || sysTheme);
 
 // Copy code buttons
 const rawCode = {
@@ -597,11 +598,32 @@ tracker.addEventListener('phase-complete', e => {
 };
 
 function copyCode(btn, id) {
-  navigator.clipboard.writeText(rawCode[id]).then(() => {
+  const text = rawCode[id];
+  const succeed = () => {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
-  });
+  };
+  const fail = () => {
+    btn.textContent = 'Failed';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(succeed).catch(fail);
+  } else {
+    // Fallback for non-HTTPS or older browsers
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      succeed();
+    } catch { fail(); }
+  }
 }
 
 // Listen to tracker events (demo)
