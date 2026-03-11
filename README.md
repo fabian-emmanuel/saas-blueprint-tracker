@@ -5,7 +5,7 @@
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?style=for-the-badge)](#)
 [![Demo](https://img.shields.io/badge/Live_Demo-→-F0A500?style=for-the-badge)](https://saas-blueprint-tracker.pages.dev/saas-blueprint-demo.html)
 
-An interactive Web Component that tracks your SaaS journey from idea to exit — **18 phases, 119 milestones, zero dependencies.**
+An interactive Web Component that tracks your SaaS journey from idea to exit — **18 phases, 109 milestones, zero dependencies.**
 
 > Drop it into any website with two lines of code. No React. No build step. No backend.
 
@@ -39,7 +39,7 @@ That's it. Progress auto-saves to `localStorage`. Works in plain HTML, React, Vu
 
 **Scale** — Scaling
 
-119 milestones across all phases, each with a description guiding what to do and why.
+109 milestones across all phases, each with a description guiding what to do and why.
 
 ---
 
@@ -231,7 +231,7 @@ Have a step that belongs in the blueprint? Open an issue titled **"Milestone sug
 - Export / import progress as JSON
 - First-visit onboarding modal
 - Next-phase nudge after completing a phase
-- Milestone descriptions (hover to reveal on all 119 items)
+- Milestone descriptions (hover to reveal on all 109 items)
 - Mobile navigation drawer
 - Unified button styles and nav height across all pages
 - Open Graph and Twitter Card meta tags on all pages
@@ -239,7 +239,7 @@ Have a step that belongs in the blueprint? Open an issue titled **"Milestone sug
 
 ### v1.0.0
 - Initial release
-- 18 phases, 119 milestones covering the full SaaS lifecycle
+- 18 phases, 109 milestones covering the full SaaS lifecycle
 - Zero-dependency Web Component with Shadow DOM
 - Dark & Light theme support
 - Multi-project localStorage namespacing
