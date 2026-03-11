@@ -233,6 +233,40 @@ footer {
   font-size: 12px; color: var(--muted);
 }
 .footer-logo { font-family: var(--font-d); font-style: italic; font-size: 14px; color: var(--muted); }
+
+/* ── MOBILE ── */
+@media (max-width: 700px) {
+  nav { padding: 0 16px; }
+  .nav-link:not(.primary):not([href="landing.html"]) { display: none; }
+  .nav-link[href="landing.html"] { padding: 6px 8px; font-size: 11px; }
+
+  .hero { padding: 90px 16px 40px; }
+  .hero-h1 { font-size: clamp(28px, 8vw, 42px); }
+  .hero-sub { font-size: 14px; }
+  .hero-pills { gap: 6px; }
+  .pill { font-size: 9.5px; padding: 4px 10px; }
+
+  .tracker-section { padding: 0 12px 20px; }
+  .tracker-wrap { height: 520px; border-radius: 8px; }
+
+  .controls { padding: 0 0 14px; gap: 10px; flex-wrap: wrap; }
+  .toggle-btn { padding: 6px 12px; font-size: 10px; }
+
+  .section { padding: 48px 16px; }
+  .section-h2 { font-size: clamp(24px, 7vw, 32px); }
+
+  pre { font-size: 11px; padding: 14px; }
+
+  .features { grid-template-columns: 1fr; }
+
+  footer { padding: 24px 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
+@media (max-width: 400px) {
+  .tracker-wrap { height: 460px; }
+  nav { height: 52px; }
+  .nav-logo { font-size: 15px; }
+}
 </style>
 </head>
 <body>
