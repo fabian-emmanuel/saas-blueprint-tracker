@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-v1.0.0-blue?style=for-the-badge)](https://github.com/fabian-emmanuel/saas-blueprint-tracker/releases)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?style=for-the-badge)](#)
-[![Demo](https://img.shields.io/badge/Live_Demo-→-F0A500?style=for-the-badge)](https://saas-blueprint-tracker.pages.dev/saas-blueprint-demo.html)
+[![Demo](https://img.shields.io/badge/Live_Demo-→-F0A500?style=for-the-badge)](https://saas-blueprint-tracker.fabian-emmanuel.workers.dev/saas-blueprint-demo.html)
 
 An interactive Web Component that tracks your SaaS journey from idea to exit — **18 phases, 109 milestones, zero dependencies.**
 
@@ -15,7 +15,7 @@ An interactive Web Component that tracks your SaaS journey from idea to exit —
 
 ```html
 <!-- 1. Load the component -->
-<script src="https://saas-blueprint-tracker.pages.dev/saas-blueprint-tracker.js"></script>
+<script src="https://saas-blueprint-tracker.fabian-emmanuel.workers.dev/saas-blueprint-tracker.js"></script>
 
 <!-- 2. Use it anywhere -->
 <saas-blueprint-tracker style="height: 700px"></saas-blueprint-tracker>
@@ -136,7 +136,7 @@ export class AppModule {}
 Paste anywhere:
 
 ```html
-<script src="https://saas-blueprint-tracker.pages.dev/saas-blueprint-tracker.js"></script>
+<script src="https://saas-blueprint-tracker.fabian-emmanuel.workers.dev/saas-blueprint-tracker.js"></script>
 <saas-blueprint-tracker style="height: 700px"></saas-blueprint-tracker>
 ```
 
