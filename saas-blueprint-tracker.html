@@ -456,6 +456,99 @@ body.light .btn-theme:hover { background: var(--surface-2); }
   flex: 1; justify-content: center; padding: 8px;
 }
 
+/* ── SUMMARY VIEW ── */
+.summary-panel {
+  position: fixed; top: 58px; left: 248px; right: 0; bottom: 0;
+  background: var(--bg); z-index: 120; overflow-y: auto;
+  padding: 36px 44px 60px;
+  transform: translateY(-8px); opacity: 0; pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.summary-panel.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+
+.summary-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 36px;
+}
+.summary-title {
+  font-family: var(--font-d); font-style: italic; font-weight: 700;
+  font-size: 32px; letter-spacing: -0.02em; color: var(--text);
+}
+.summary-close {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); background: none;
+  border: 1px solid var(--border); border-radius: 4px; padding: 5px 12px;
+  cursor: pointer; transition: all 0.2s;
+}
+.summary-close:hover { color: var(--text); border-color: var(--border-2); }
+
+.summary-stage { margin-bottom: 36px; }
+.summary-stage-label {
+  font-family: var(--font-m); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
+}
+.summary-stage-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.summary-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;
+}
+
+.summary-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.summary-card:hover { border-color: var(--border-2); background: var(--surface-2); transform: translateY(-1px); }
+.summary-card.is-done { border-color: rgba(13,207,139,0.2); }
+.summary-card.is-active { border-color: var(--accent); }
+
+.summary-ring-wrap { display: flex; align-items: center; gap: 10px; }
+.summary-ring { flex-shrink: 0; }
+.summary-ring-track { fill: none; stroke: var(--surface-3); stroke-width: 3; }
+.summary-ring-fill { fill: none; stroke-width: 3; stroke-linecap: round;
+  transform: rotate(-90deg); transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.summary-card.is-done .summary-ring-fill { stroke: var(--green); }
+.summary-card:not(.is-done) .summary-ring-fill { stroke: var(--accent); }
+
+.summary-pct {
+  font-family: var(--font-m); font-size: 18px; font-weight: 500; line-height: 1;
+  color: var(--text);
+}
+.summary-card.is-done .summary-pct { color: var(--green); }
+
+.summary-name {
+  font-size: 12px; font-weight: 500; color: var(--muted); line-height: 1.3;
+  transition: color 0.15s;
+}
+.summary-card:hover .summary-name { color: var(--text); }
+.summary-card.is-done .summary-name { color: var(--green); }
+
+.summary-ct {
+  font-family: var(--font-m); font-size: 9px; color: var(--dim);
+  letter-spacing: 0.06em;
+}
+.summary-card.is-active .summary-name { color: var(--accent); }
+
+/* ── SUMMARY TOPBAR BUTTON ── */
+.btn-summary {
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); background: none;
+  border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-summary:hover { color: var(--text); border-color: var(--border-2); }
+.btn-summary.active { color: var(--accent); border-color: rgba(240,165,0,0.35); }
+
+@media (max-width: 700px) {
+  .summary-panel { left: 0; padding: 20px 14px 60px; }
+  .summary-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .btn-summary { display: none; }
+}
+
 /* ── CARD DOC BUTTON ── */
 .card-doc-btn {
   position: absolute; top: 7px; right: 7px;
@@ -561,7 +654,7 @@ body.light .btn-theme:hover { background: var(--surface-2); }
 @media (max-width: 700px) {
   .sidebar { display: none; }
   .btn-menu { display: flex; }
-  .btn-reset, .btn-home, .btn-export, .btn-import { display: none; }
+  .btn-reset, .btn-home, .btn-export, .btn-import, .btn-summary { display: none; }
   .global-stats { font-size: 10px; }
   .topbar { gap: 10px; padding: 0 12px; }
   .logo { font-size: 15px; }
@@ -596,6 +689,7 @@ body.light .btn-theme:hover { background: var(--surface-2); }
       <path d="M7.5 1v1M7.5 13v1M1 7.5H2M13 7.5h1M3.1 3.1l.7.7M11.2 11.2l.7.7M11.2 3.1l-.7.7M3.8 11.2l-.7.7M10.5 7.5a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
     </svg>
   </button>
+  <button class="btn-summary" id="btnSummary" onclick="toggleSummary()" title="Overview of all phases">Overview</button>
   <button class="btn-export" onclick="exportProgress()" title="Export progress as JSON">Export</button>
   <label class="btn-import" title="Import progress from JSON">Import<input type="file" accept=".json" style="display:none" onchange="importProgress(this)"></label>
   <button class="btn-reset" onclick="resetAll()">Reset</button>
@@ -617,6 +711,9 @@ body.light .btn-theme:hover { background: var(--surface-2); }
     <button class="btn-reset" onclick="resetAll();closeDrawer()">Reset</button>
   </div>
 </div>
+
+<!-- SUMMARY PANEL -->
+<div class="summary-panel" id="summaryPanel"></div>
 
 <!-- DOC PANEL -->
 <div class="doc-panel" id="docPanel">
@@ -1128,6 +1225,75 @@ function setPhase(id) {
   renderMain(); // re-renders all cards, so expanded state resets automatically
   refreshSidebar();
   document.getElementById('main').scrollTop = 0;
+}
+
+// ── SUMMARY VIEW ──────────────────────────────────────────────────────────────
+
+let summaryOpen = false;
+
+function toggleSummary() {
+  summaryOpen ? closeSummary() : openSummary();
+}
+
+function openSummary() {
+  summaryOpen = true;
+  document.getElementById('btnSummary').classList.add('active');
+  const panel = document.getElementById('summaryPanel');
+  panel.innerHTML = renderSummaryHTML();
+  panel.classList.add('open');
+}
+
+function closeSummary() {
+  summaryOpen = false;
+  document.getElementById('btnSummary').classList.remove('active');
+  document.getElementById('summaryPanel').classList.remove('open');
+}
+
+function renderSummaryHTML() {
+  const totalDone  = done.size;
+  const totalAll   = PHASES.reduce((s, p) => s + pitems(p).length, 0);
+  const totalPct   = totalAll ? Math.round((totalDone / totalAll) * 100) : 0;
+
+  const stagesHtml = STAGES.map(stage => {
+    const cards = stage.ids.map(id => {
+      const p    = PHASES.find(x => x.id === id);
+      const d    = pDone(p), t = pitems(p).length;
+      const pct  = t ? Math.round((d / t) * 100) : 0;
+      const r    = 16; const circ = 2 * Math.PI * r;
+      const offset = circ - (pct / 100) * circ;
+      const isDone   = d === t;
+      const isActive = id === active;
+      return `
+        <div class="summary-card ${isDone?'is-done':''} ${isActive?'is-active':''}"
+             onclick="closeSummary();setPhase('${id}')">
+          <div class="summary-ring-wrap">
+            <svg class="summary-ring" width="40" height="40" viewBox="0 0 40 40">
+              <circle class="summary-ring-track" cx="20" cy="20" r="${r}"/>
+              <circle class="summary-ring-fill" cx="20" cy="20" r="${r}"
+                stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+            </svg>
+            <div class="summary-pct">${pct}<span style="font-size:10px;opacity:0.5">%</span></div>
+          </div>
+          <div>
+            <div class="summary-name">${p.name}</div>
+            <div class="summary-ct">${d} / ${t}</div>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="summary-stage">
+        <div class="summary-stage-label">${stage.label}</div>
+        <div class="summary-grid">${cards}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="summary-head">
+      <div class="summary-title">Overview</div>
+      <button class="summary-close" onclick="closeSummary()">← Back</button>
+    </div>
+    ${stagesHtml}
+  `;
 }
 
 // ── NEXT PHASE NUDGE ──────────────────────────────────────────────────────────
