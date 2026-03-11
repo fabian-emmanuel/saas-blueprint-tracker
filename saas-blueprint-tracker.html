@@ -913,7 +913,8 @@ function toggleTheme() {
   lsSet(THEME_KEY, next);
   applyTheme(next);
 }
-applyTheme(lsGet(THEME_KEY, null) || 'dark');
+const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+applyTheme(lsGet(THEME_KEY, null) || systemTheme);
 
 function toast(msg, isWarning = false) {
   const el  = document.getElementById('toast');
