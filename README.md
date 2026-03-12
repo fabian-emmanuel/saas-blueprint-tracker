@@ -1,7 +1,7 @@
 # SaaS Blueprint Tracker
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-v1.0.0-blue?style=for-the-badge)](https://github.com/fabian-emmanuel/saas-blueprint-tracker/releases)
+[![Version](https://img.shields.io/badge/version-v1.2.0-blue?style=for-the-badge)](https://github.com/fabian-emmanuel/saas-blueprint-tracker/releases)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?style=for-the-badge)](#)
 [![Demo](https://img.shields.io/badge/Live_Demo-→-F0A500?style=for-the-badge)](https://saas-blueprint-tracker.pages.dev/saas-blueprint-demo.html)
 
@@ -170,13 +170,19 @@ Use these to sync progress to your backend, trigger analytics events, unlock fea
 
 **18 phases, 5 stages** — structured around the full SaaS lifecycle from first idea to exit strategy. Every milestone has a description explaining what it is and why it matters.
 
-**Dark & Light theme** — set via the `theme` attribute. Shadow DOM isolates all styles from the host page — zero CSS conflicts.
+**Project management** — create, rename, switch, and delete named projects from the topbar. Each project has fully independent milestone progress and notes. Existing data auto-migrates to a default project on first load.
+
+**Per-milestone notes (PRD)** — click the pencil icon on any milestone to open a structured notes panel. Each phase type has a tailored template (problem statement, hypothesis, test cases, etc.). Notes auto-save and export with your progress.
+
+**Dark & Light theme** — toggle in the topbar or set via the `theme` attribute on the Web Component. Shadow DOM isolates all styles from the host page — zero CSS conflicts.
 
 **Multi-project support** — the `project` attribute namespaces localStorage so you can run independent trackers for different ideas on the same page.
 
 **Custom events** — `item-toggle` and `phase-complete` fire with full detail payloads, compatible with any analytics tool or backend.
 
-**Responsive** — sidebar collapses on mobile. Works on all screen sizes.
+**Export / Import** — export your full progress and notes as a JSON backup, import it on any device. Export filename includes project name and date.
+
+**Responsive** — sidebar collapses on mobile with a navigation drawer. Works on all screen sizes.
 
 **Zero dependencies** — one `.js` file, no npm install required, no build pipeline.
 
@@ -188,7 +194,8 @@ Use these to sync progress to your backend, trigger analytics events, unlock fea
 |------|-------------|
 | `saas-blueprint-tracker.js` | The Web Component — this is what you embed |
 | `saas-blueprint-tracker.html` | Standalone tracker — open directly in a browser, no server needed |
-| `saas-blueprint-demo.html` | Demo/landing page with live preview and embed code examples |
+| `saas-blueprint-demo.html` | Embed docs — live preview with copy-paste code examples |
+| `landing.html` | Marketing landing page |
 | `saas-blueprint.md` | The raw blueprint as a folder tree |
 
 ---
@@ -227,12 +234,24 @@ Have a step that belongs in the blueprint? Open an issue titled **"Milestone sug
 
 ## Changelog
 
+### v1.2.0
+- Project management — create, rename, switch, and delete named projects from the topbar
+- Each project has independent milestone progress and notes; existing data auto-migrates
+- Onboarding modal now includes a project name field
+- Per-milestone structured notes panel (PRD templates per phase type)
+- Notes auto-save with debounce; export as Markdown per milestone
+- Dark/light theme toggle on all pages (landing, tracker, embed docs)
+- Export filename includes project slug and date
+
 ### v1.1.0
-- Export / import progress as JSON
+- Export / import progress as JSON (v2 format includes notes)
 - First-visit onboarding modal
 - Next-phase nudge after completing a phase
 - Milestone descriptions (hover to reveal on all 109 items)
 - Mobile navigation drawer
+- URL hash deep-linking for direct phase navigation
+- Keyboard navigation (↑↓ phases, Space/Enter toggles cards)
+- Overview panel with SVG ring progress per phase
 - Unified button styles and nav height across all pages
 - Open Graph and Twitter Card meta tags on all pages
 - Improved page titles for SEO
